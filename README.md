@@ -44,6 +44,3 @@ The frontend application is built with modern web technologies and can be found 
 
 The backend service is located in the `aptos-backend/` directory and handles the business logic and API endpoints.
 
-## License
-
-MIT 
