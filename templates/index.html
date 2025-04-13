@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aptos Sports Training Platform</title>
+    <script src="https://unpkg.com/petra-plugin-aptos-wallet@1.1.1/dist/index.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #000;
+            color: #fff;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            opacity: 0.6;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(0,0,0,0.7), rgba(0,0,0,0.3));
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInDown 1s ease;
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #00ff88, #00a1ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 10px rgba(0,255,136,0.3);
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: fadeInUp 1s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: #00ff88;
+            text-shadow: 0 0 10px rgba(0,255,136,0.3);
+        }
+
+        .button {
+            background: linear-gradient(45deg, #00ff88, #00a1ff);
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(0,255,136,0.4);
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #00ff88;
+        }
+
+        .wallet-info {
+            background: rgba(0, 255, 136, 0.1);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+            border: 1px solid rgba(0, 255, 136, 0.2);
+        }
+
+        .status-message {
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+            text-align: center;
+            font-weight: bold;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .status-message.success {
+            background: rgba(0, 255, 136, 0.2);
+            border: 1px solid rgba(0, 255, 136, 0.4);
+            color: #00ff88;
+        }
+
+        .status-message.error {
+            background: rgba(255, 0, 0, 0.2);
+            border: 1px solid rgba(255, 0, 0, 0.4);
+            color: #ff4444;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #00ff88;
+            animation: spin 1s ease-in-out infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <video class="video-background" autoplay loop muted playsinline>
+        <source src="https://assets.mixkit.co/videos/preview/mixkit-abstract-technology-network-connections-99786-large.mp4" type="video/mp4">
+    </video>
+    <div class="overlay"></div>
+
+    <div class="container">
+        <header class="header">
+            <h1>Aptos Sports Training Platform</h1>
+            <p>Stake your tokens and join the future of sports training</p>
+        </header>
+
+        <div class="card">
+            <h2 class="section-title">Wallet Connection</h2>
+            <button id="connect-wallet" class="button">
+                Connect Petra Wallet
+            </button>
+            <div id="wallet-info" class="wallet-info hidden">
+                <p>Connected Address: <span id="wallet-address" class="font-mono"></span></p>
+                <p>Balance: <span id="wallet-balance" class="font-mono"></span> APT</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 class="section-title">Token Staking</h2>
+            <div class="input-group">
+                <label for="stake-amount">Amount to Stake (APT)</label>
+                <input type="number" id="stake-amount" value="100" min="100" step="1" class="input-field">
+            </div>
+            <button id="stake-button" class="button">
+                Stake Tokens
+            </button>
+        </div>
+
+        <div id="status-section">
+            <div id="status-message" class="status-message hidden"></div>
+        </div>
+    </div>
+
+    <script>
+        let wallet = null;
+        let connectedAddress = null;
+
+        // Initialize Petra Wallet
+        async function initWallet() {
+            if (window.petra) {
+                wallet = window.petra;
+            } else {
+                console.error('Petra wallet not found');
+            }
+        }
+
+        // Connect wallet
+        document.getElementById('connect-wallet').addEventListener('click', async () => {
+            try {
+                const button = document.getElementById('connect-wallet');
+                button.innerHTML = '<span class="loading"></span> Connecting...';
+                button.disabled = true;
+
+                await initWallet();
+                const response = await wallet.connect();
+                connectedAddress = response.address;
+                document.getElementById('wallet-address').textContent = connectedAddress;
+                document.getElementById('wallet-info').classList.remove('hidden');
+                await updateBalance();
+
+                button.innerHTML = 'Connected';
+                button.style.background = 'linear-gradient(45deg, #00ff88, #00a1ff)';
+            } catch (error) {
+                console.error('Failed to connect wallet:', error);
+                showStatus('Failed to connect wallet', 'error');
+                button.innerHTML = 'Connect Petra Wallet';
+                button.disabled = false;
+            }
+        });
+
+        // Update wallet balance
+        async function updateBalance() {
+            try {
+                const response = await fetch(`/balance/${connectedAddress}`);
+                const data = await response.json();
+                document.getElementById('wallet-balance').textContent = data.balance;
+            } catch (error) {
+                console.error('Failed to fetch balance:', error);
+            }
+        }
+
+        // Stake tokens
+        document.getElementById('stake-button').addEventListener('click', async () => {
+            if (!connectedAddress) {
+                showStatus('Please connect your wallet first', 'error');
+                return;
+            }
+
+            const button = document.getElementById('stake-button');
+            const amount = document.getElementById('stake-amount').value;
+            
+            try {
+                button.innerHTML = '<span class="loading"></span> Processing...';
+                button.disabled = true;
+
+                const response = await fetch('/stake', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        address: connectedAddress,
+                        amount: parseInt(amount)
+                    })
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || 'Failed to create transaction');
+                }
+                
+                const { transaction } = await response.json();
+                
+                const signedTx = await wallet.signAndSubmitTransaction(transaction);
+                
+                showStatus('Staking transaction submitted successfully', 'success');
+                await updateBalance();
+                
+                button.innerHTML = 'Stake Tokens';
+                button.disabled = false;
+            } catch (error) {
+                console.error('Failed to stake tokens:', error);
+                showStatus(error.message || 'Failed to stake tokens', 'error');
+                button.innerHTML = 'Stake Tokens';
+                button.disabled = false;
+            }
+        });
+
+        // Show status messages
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('status-message');
+            statusDiv.textContent = message;
+            statusDiv.classList.remove('hidden', 'success', 'error');
+            statusDiv.classList.add(type);
+            
+            // Auto-hide success messages after 5 seconds
+            if (type === 'success') {
+                setTimeout(() => {
+                    statusDiv.classList.add('hidden');
+                }, 5000);
+            }
+        }
+    </script>
+</body>
+</html> 
